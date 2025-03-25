@@ -1,13 +1,14 @@
 {
   "name": "the-rock-is-watching-u",
   "displayName": "The Rock Is Watching U",
-  "description": "The Rock Is Watching U",
+  "description": "The Rock Is Watching U and make sure you're not making any error",
   "publisher": "wilsonleung-767",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/wilsonleung767/the-rock-is-watching-u"
   },
+  "icon": "media/theRockGlance.jpg",
   "engines": {
     "vscode": "^1.85.1"
   },
