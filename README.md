@@ -21,12 +21,10 @@ A fun and motivational VS Code extension that displays The Rock watching over yo
 
 ## Installation
 
-1. Download the .vsix file from the releases
 2. Open VS Code
 3. Go to Extensions (Ctrl+Shift+X)
-4. Click the "..." menu at the top of the Extensions view
-5. Select "Install from VSIX..."
-6. Choose the downloaded file
+4. Search the rock is watching u
+5. Install the extension
 
 ## Usage
 
@@ -34,15 +32,11 @@ Once installed, the extension activates automatically when you open VS Code. The
 
 ## Requirements
 
-- VS Code 1.60.0 or higher
+- VS Code 1.80.0 or higher
 - Audio output for the full experience
 
 ## Privacy
 
 This extension doesn't collect any data - it's just you and The Rock.
-
-## License
-
-MIT
 
 **Enjoy coding under The Rock's watchful eye!**

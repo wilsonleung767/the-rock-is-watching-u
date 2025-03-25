@@ -4,8 +4,12 @@
   "description": "The Rock Is Watching U",
   "publisher": "wilsonleung-767",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wilsonleung767/the-rock-is-watching-u"
+  },
   "engines": {
-    "vscode": "^1.98.0"
+    "vscode": "^1.85.1"
   },
   "categories": [
     "Other"
@@ -15,16 +19,15 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "the-rock-is-watching-u.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "the-rock-is-watching-u.showVideo",
-        "title": "Show The Rock Is Watching U"
-      }
-    ]
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "the-rock-watching-u.sideBarView",
+          "name": "The Rock Is Watching U"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -37,7 +40,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "@types/vscode": "^1.98.0",
+    "@types/vscode": "^1.85.1",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "@vscode/test-cli": "^0.0.10",
