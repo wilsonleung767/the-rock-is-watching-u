@@ -11,7 +11,6 @@ const ERROR_THRESHOLD = 3;
 let isInErrorMode = false;
 let userInteracted = false; // Track if user has interacted with the panel
 let typingTimer: NodeJS.Timeout | undefined; // Timer to track when typing stops
-let previousDiagnostics: vscode.Diagnostic[] = [];
 
 // Create a WebviewViewProvider for the side bar view
 class TheRockViewProvider implements vscode.WebviewViewProvider {
@@ -226,18 +225,6 @@ export function activate(context: vscode.ExtensionContext) {
         provider
       );
 
-      // Reset typing timer when user types
-      if (typingTimer) {
-        clearTimeout(typingTimer);
-      }
-
-      // Set a timer to enable sound after user stops typing for 2 seconds
-      typingTimer = setTimeout(() => {
-        if (!userInteracted) {
-          userInteracted = true;
-          provider.updateContent(isInErrorMode);
-        }
-      }, 2000);
     }),
 
     // Listen for save events to enable sound
@@ -272,21 +259,6 @@ export function activate(context: vscode.ExtensionContext) {
       provider
     );
   }
-
-  vscode.languages.onDidChangeDiagnostics((e: vscode.DiagnosticChangeEvent) => {
-    const diagnostics = vscode.languages.getDiagnostics();
-    const currentErrors = diagnostics.flatMap(([_, diagnostics]) => 
-      diagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error)
-    );
-
-    // Play sound if there are new errors AND they exceed the threshold
-    if (currentErrors.length > previousDiagnostics.length && currentErrors.length >= ERROR_THRESHOLD) {
-      playErrorSound(context);
-    }
-
-    previousDiagnostics = currentErrors;
-    provider.updateContent(isInErrorMode);
-  });
 }
 
 // Update the error status for the current document
@@ -321,7 +293,6 @@ async function updateErrorStatus(
 }
 
 function playErrorSound(context: vscode.ExtensionContext) {
-  // Check if sound effect is enabled
   const config = vscode.workspace.getConfiguration('theRockIsWatchingU');
   const soundEnabled = config.get('enableSoundEffect', true);
   
@@ -329,7 +300,9 @@ function playErrorSound(context: vscode.ExtensionContext) {
     return; // Don't play sound if disabled
   }
 
-  const soundPath = path.join(context.extensionPath, 'media', 'ohHellNo.mp3');
+  const soundPath = path.join(context.extensionPath, "media", "ohHellNo.mp3");
+
+  // Platform-specific commands
   let command: string;
   let args: string[];
 
