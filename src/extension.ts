@@ -11,6 +11,7 @@ const ERROR_THRESHOLD = 3;
 let isInErrorMode = false;
 let userInteracted = false; // Track if user has interacted with the panel
 let typingTimer: NodeJS.Timeout | undefined; // Timer to track when typing stops
+let previousDiagnostics: vscode.Diagnostic[] = [];
 
 // Create a WebviewViewProvider for the side bar view
 class TheRockViewProvider implements vscode.WebviewViewProvider {
@@ -88,7 +89,7 @@ class TheRockViewProvider implements vscode.WebviewViewProvider {
         body {
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: center;
           height: 100vh;
           margin: 0;
@@ -99,6 +100,7 @@ class TheRockViewProvider implements vscode.WebviewViewProvider {
         video {
           max-width: 100%;
           max-height: 80%;
+          margin: 20px 10px 0 10px;
         }
         .error-counter {
           margin-top: 5px;
@@ -270,6 +272,21 @@ export function activate(context: vscode.ExtensionContext) {
       provider
     );
   }
+
+  vscode.languages.onDidChangeDiagnostics((e: vscode.DiagnosticChangeEvent) => {
+    const diagnostics = vscode.languages.getDiagnostics();
+    const currentErrors = diagnostics.flatMap(([_, diagnostics]) => 
+      diagnostics.filter(d => d.severity === vscode.DiagnosticSeverity.Error)
+    );
+
+    // Play sound if there are new errors AND they exceed the threshold
+    if (currentErrors.length > previousDiagnostics.length && currentErrors.length >= ERROR_THRESHOLD) {
+      playErrorSound(context);
+    }
+
+    previousDiagnostics = currentErrors;
+    provider.updateContent(isInErrorMode);
+  });
 }
 
 // Update the error status for the current document
@@ -304,9 +321,15 @@ async function updateErrorStatus(
 }
 
 function playErrorSound(context: vscode.ExtensionContext) {
-  const soundPath = path.join(context.extensionPath, "media", "ohHellNo.mp3");
+  // Check if sound effect is enabled
+  const config = vscode.workspace.getConfiguration('theRockIsWatchingU');
+  const soundEnabled = config.get('enableSoundEffect', true);
+  
+  if (!soundEnabled) {
+    return; // Don't play sound if disabled
+  }
 
-  // Platform-specific commands
+  const soundPath = path.join(context.extensionPath, 'media', 'ohHellNo.mp3');
   let command: string;
   let args: string[];
 
@@ -314,8 +337,14 @@ function playErrorSound(context: vscode.ExtensionContext) {
     case "win32":
       command = "powershell";
       args = [
-        "-c",
-        `(New-Object System.Media.SoundPlayer '${soundPath}').PlaySync()`,
+        "-Command",
+        `
+        Add-Type -AssemblyName PresentationCore;
+        $mediaPlayer = New-Object System.Windows.Media.MediaPlayer;
+        $mediaPlayer.Open('${soundPath}');
+        $mediaPlayer.Play();
+        Start-Sleep -Seconds 10;
+        `
       ];
       break;
     case "darwin": // macOS

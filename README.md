@@ -21,6 +21,7 @@ A fun and motivational VS Code extension that displays The Rock watching over yo
 
 ## Installation
 
+1. Install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=wilsonleung-767.the-rock-is-watching-u)
 2. Open VS Code
 3. Go to Extensions (Ctrl+Shift+X)
 4. Search the rock is watching u
@@ -34,6 +35,10 @@ Once installed, the extension activates automatically when you open VS Code. The
 
 - VS Code 1.80.0 or higher
 - Audio output for the full experience
+
+## Settings
+
+- `theRockIsWatchingU.enableSoundEffect`: Enable or disable The Rock's sound effect when errors exceed the threshold (default: true)
 
 ## Privacy
 
